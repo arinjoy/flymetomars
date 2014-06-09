@@ -1,0 +1,94 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+    <import resource="classpath*:applicationContext.xml"/>
+
+    <bean id="root" class="org.restlet.ext.spring.SpringRouter" lazy-init="true">
+        <property name="attachments">
+            <map>
+                <entry key="">
+                    <bean class="org.restlet.ext.spring.SpringFinder">
+                        <lookup-method name="create" bean="indexResource"/>
+                    </bean>
+                </entry>
+
+                <entry key="/">
+                    <bean class="org.restlet.ext.spring.SpringFinder">
+                        <lookup-method name="create" bean="indexResource"/>
+                    </bean>
+                </entry>
+
+                <entry key="/login">
+                    <bean class="org.restlet.ext.spring.SpringFinder">
+                        <lookup-method name="create" bean="loginResource"/>
+                    </bean>
+                </entry>
+
+                <entry key="/register">
+                    <bean class="org.restlet.ext.spring.SpringFinder">
+                        <lookup-method name="create" bean="registerResource"/>
+                    </bean>
+                </entry>
+
+                <entry key="/user/{name}">
+                    <bean class="org.restlet.ext.spring.SpringFinder">
+                        <lookup-method name="create" bean="userResource"/>
+                    </bean>
+                </entry>
+
+                <entry key="/mission/create">
+                    <bean class="org.restlet.ext.spring.SpringFinder">
+                        <lookup-method name="create" bean="createMissionResource"/>
+                    </bean>
+                </entry>
+
+                <entry key="/mission/{id}/create_invitation">
+                    <bean class="org.restlet.ext.spring.SpringFinder">
+                        <lookup-method name="create" bean="createInvitationResource"/>
+                    </bean>
+                </entry>
+                
+                 <entry key="/location/create">
+                    <bean class="org.restlet.ext.spring.SpringFinder">
+                        <lookup-method name="create" bean="createLocationResource"/>
+                    </bean>
+                </entry>
+                
+                <entry key="/user/{userName}/add_expertise">
+                    <bean class="org.restlet.ext.spring.SpringFinder">
+                        <lookup-method name="create" bean="addExpertiseResource"/>
+                    </bean>
+                </entry>
+
+                <entry key="/mission/{id}">
+                    <bean class="org.restlet.ext.spring.SpringFinder">
+                        <lookup-method name="create" bean="missionResource"/>
+                    </bean>
+                </entry>
+
+                <entry key="/invitation/{id}">
+                    <bean class="org.restlet.ext.spring.SpringFinder">
+                        <lookup-method name="create" bean="invitationResource"/>
+                    </bean>
+                </entry>
+                
+                 <entry key="/location/{id}">
+                    <bean class="org.restlet.ext.spring.SpringFinder">
+                        <lookup-method name="create" bean="locationResource"/>
+                    </bean>
+                </entry>
+                
+                 <entry key="/expertise/{id}">
+                    <bean class="org.restlet.ext.spring.SpringFinder">
+                        <lookup-method name="create" bean="expertiseResource"/>
+                    </bean>
+                </entry>
+
+            </map>
+        </property>
+    </bean>
+</beans>

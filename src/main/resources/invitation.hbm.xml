@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping auto-import="true">
+  <class name="flymetomars.dataaccess.entities.InvitationEntity" table="invitation">
+    <id column="invitation_id" name="id">
+      <generator class="native"/>
+    </id>
+    <property name="lastUpdated" not-null="true" type="java.util.Date"/>
+    <property column="status" name="status" not-null="true"/>
+    <many-to-one cascade="none" column="creator_id" lazy="false" name="creator" not-null="true"/>
+    <many-to-one cascade="none" column="recipient_id" lazy="false" name="recipient" not-null="true"/>
+    <many-to-one cascade="none" column="mission_id" lazy="false" name="mission" not-null="true"/>
+  </class>
+</hibernate-mapping>

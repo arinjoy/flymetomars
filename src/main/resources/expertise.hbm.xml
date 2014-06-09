@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping auto-import="true">
+  <class name="flymetomars.dataaccess.entities.ExpertiseEntity" table="expertise">
+    <id column="expertise_id" name="id">
+      <generator class="native"/>
+    </id>
+    <property length="20" name="name" not-null="true"/>
+    <property length="120" name="description" not-null="true"/>
+    <join optional="true" table="person_expertise">
+      <key column="expertise_id"/>
+      <property length="30" name="level" not-null="true"/>
+      <many-to-one column="person_id" name="heldBy" not-null="true"/>
+    </join>
+  </class>
+</hibernate-mapping>

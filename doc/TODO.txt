@@ -1,0 +1,38 @@
+#Assignment 3 core
+Ensure JWebUnit tests run properly
+	investigate auth issues?
+
+#Peresntation layer Templates
+Investigate heirarchical templating
+	If possible develop master template
+	Integrate previously developed logotype
+
+
+
+#Nice to haves:
+
+##Finish Mockito Core tests
+	EntityLoader needs tests for:
+		Invitation
+		Location
+		Expertise
+		Salt
+	As well as additional SaltedPassword test(s)
+
+
+##DAO Custom Exceptions
+FMTMPersistanceException
+	FMTMNullReferenceException
+	FMTMQueryException
+		FMTMQueryPredicateException
+	FMTMBackingstoreException
+		FMTMBackingstoreAbortException
+		FMTMBackingstoreIntegrityException
+	FMTMPersistanceParamaterException
+		FMTMVagrantInputException
+		FMTMAlreadyPersistedException
+		FMTMUniqueValuePresentException
+
+
+##Assignment two mining logic repair
+	Fix Social Circles

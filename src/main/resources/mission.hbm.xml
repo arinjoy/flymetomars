@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping auto-import="true">
+  <class name="flymetomars.dataaccess.entities.MissionEntity" table="mission">
+    <id column="mission_id" name="id">
+      <generator class="native"/>
+    </id>
+    <property length="50" name="name" not-null="true" unique="true"/>
+    <property length="300" name="description"/>
+    <property name="time" not-null="true"/>
+    <many-to-one cascade="save-update" column="captain_id" lazy="false" name="captain" not-null="true"/>
+    <many-to-one cascade="save-update" column="location_id" lazy="false" name="location" not-null="true"/>
+    <set cascade="none" inverse="true" name="participantSet" table="person_mission">
+      <key column="mission_id"/>
+      <many-to-many class="flymetomars.dataaccess.entities.PersonEntity" column="person_id"/>
+    </set>
+  </class>
+</hibernate-mapping>

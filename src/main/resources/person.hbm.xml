@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping auto-import="true">
+  <class name="flymetomars.dataaccess.entities.PersonEntity" table="person">
+    <id column="person_id" name="Id">
+      <generator class="native"/>
+    </id>
+    <property length="25" name="firstName" not-null="true"/>
+    <property length="25" name="lastName" not-null="true"/>
+    <property length="80" name="email" not-null="true" unique="true"/>
+    <property length="20" name="userName" not-null="true" unique="true"/>
+    <!--<one-to-one cascade="all" class="flymetomars.dataaccess.entities.SaltedPasswordEntity" name="password"/>-->
+    <property name="password" type="java.lang.Long" column="password" not-null="true"/>
+    <set cascade="all" inverse="false" name="missionsRegistered" table="person_mission">
+      <key column="person_id"/>
+      <many-to-many class="flymetomars.dataaccess.entities.MissionEntity" column="mission_id"/>
+    </set>
+    <set cascade="save-update" lazy="true" name="invitationsReceived" table="invitation">
+      <key column="recipient_id"/>
+      <one-to-many class="flymetomars.dataaccess.entities.InvitationEntity"/>
+    </set>
+    <set cascade="save-update" inverse="false" name="expertiseGained" table="person_expertise">
+      <key column="person_id"/>
+      <many-to-many class="flymetomars.dataaccess.entities.ExpertiseEntity" column="expertise_id"/>
+    </set>
+  </class>
+</hibernate-mapping>

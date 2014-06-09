@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/util
+       http://www.springframework.org/schema/util/spring-util-3.2.1.xsd
+       http://www.springframework.org/schema/tx
+       http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+       http://www.springframework.org/schema/aop
+       http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+       http://www.springframework.org/schema/tx
+       http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
+
+    <import resource="classpath*:application-wiring.xml"/>
+
+    <bean id="springSecurityFilterChain" class="org.springframework.web.filter.DelegatingFilterProxy"/>
+
+    <!-- Begin Spring Security Beans -->
+    
+    <!--<bean id="userDetailsService" class="flymetomars.presentation.webservices.auth.WUserDetailsService">
+        <constructor-arg ref="coreLoader"/>
+    </bean>-->
+    
+    <bean id="customAuthProvider" class="flymetomars.presentation.webservices.auth.FMTMAuthenticationProvider">
+        <constructor-arg ref="authenticationService"/>
+    </bean>
+
+    <bean id="objectLevelAuthorizer" class="flymetomars.presentation.webservices.auth.ObjectLevelAuthorizer"/>
+
+    <bean id="classLevelAuthorizer" class="flymetomars.presentation.webservices.auth.ClassLevelAuthorizer"/>
+
+    <bean id="decisionManager" class="flymetomars.presentation.webservices.auth.AccessDecisionManager">
+        <constructor-arg ref="classLevelAuthorizer"/>
+        <constructor-arg ref="objectLevelAuthorizer"/>
+    </bean>
+    
+    <!-- End Spring Security Beans -->
+    
+    <!-- start FreeMarker Beans -->
+
+    <bean id="exceptionHandler" class="flymetomars.presentation.webservices.error.ExceptionHandler" scope="prototype"/>
+
+    <bean id="formHandler" class="flymetomars.presentation.webservices.util.FormHandler" scope="prototype" />
+
+    <bean id="templateLoader" class="flymetomars.presentation.webservices.templating.FreemarkerTemplateLoader" scope="singleton">
+        <constructor-arg value="/templates/"/>
+    </bean>
+    
+    <!-- End FreeMarker Beans -->
+    
+    <!-- Start Resource Beans -->
+
+    <bean id="indexResource" class="flymetomars.presentation.resources.IndexResource" scope="session">
+        <property name="templateLoader" ref="templateLoader"/>
+        <property name="exceptionHandler" ref="exceptionHandler"/>
+        <property name="entityLoader" ref="coreLoader"/>
+        <property name="manager" ref="decisionManager"/>
+    </bean>
+
+    <bean id="loginResource" class="flymetomars.presentation.resources.LoginResource" scope="session">
+        <property name="templateLoader" ref="templateLoader"/>
+        <property name="exceptionHandler" ref="exceptionHandler"/>
+        <property name="entityLoader" ref="coreLoader"/>
+        <property name="manager" ref="decisionManager"/>
+    </bean>
+
+    <bean id="registerResource" class="flymetomars.presentation.resources.RegisterResource" scope="session">
+        <property name="templateLoader" ref="templateLoader"/>
+        <property name="exceptionHandler" ref="exceptionHandler"/>
+        <property name="entityLoader" ref="coreLoader"/>
+        <property name="manager" ref="decisionManager"/>
+        <property name="formHandler" ref="formHandler"/>
+        <property name="registerService" ref="registerService"/>
+    </bean>
+
+    <bean id="userResource" class="flymetomars.presentation.resources.UserResource" scope="session">
+        <property name="templateLoader" ref="templateLoader"/>
+        <property name="exceptionHandler" ref="exceptionHandler"/>
+        <property name="entityLoader" ref="coreLoader"/>
+        <property name="manager" ref="decisionManager"/>
+        <property name="personMiner" ref="personMiner"/>
+        <property name="missionMiner" ref="missionMiner"/>
+    </bean>
+
+    <bean id="staticResource" class="flymetomars.presentation.resources.StaticResource" scope="session">
+        <property name="templateLoader" ref="templateLoader"/>
+        <property name="exceptionHandler" ref="exceptionHandler"/>
+        <property name="entityLoader" ref="coreLoader"/>
+        <property name="manager" ref="decisionManager"/>
+    </bean>
+
+    <bean id="createMissionResource" class="flymetomars.presentation.resources.CreateMissionResource" scope="session">
+        <property name="templateLoader" ref="templateLoader"/>
+        <property name="exceptionHandler" ref="exceptionHandler"/>
+        <property name="entityLoader" ref="coreLoader"/>
+        <property name="manager" ref="decisionManager"/>
+        <property name="formHandler" ref="formHandler"/>
+        <property name="entityFactory" ref="coreFactory"/>
+        <property name="entitySaver" ref="coreSaver"/>
+    </bean>
+
+    <bean id="missionResource" class="flymetomars.presentation.resources.MissionResource" scope="session">
+        <property name="templateLoader" ref="templateLoader"/>
+        <property name="exceptionHandler" ref="exceptionHandler"/>
+        <property name="manager" ref="decisionManager"/>
+        <property name="entityLoader" ref="coreLoader"/>
+    </bean>
+    
+    <bean id="locationResource" class="flymetomars.presentation.resources.LocationResource" scope="session">
+        <property name="templateLoader" ref="templateLoader"/>
+        <property name="exceptionHandler" ref="exceptionHandler"/>
+        <property name="manager" ref="decisionManager"/>
+        <property name="entityLoader" ref="coreLoader"/>
+    </bean>
+    
+    <bean id="expertiseResource" class="flymetomars.presentation.resources.ExpertiseResource" scope="session">
+        <property name="templateLoader" ref="templateLoader"/>
+        <property name="exceptionHandler" ref="exceptionHandler"/>
+        <property name="manager" ref="decisionManager"/>
+        <property name="entityLoader" ref="coreLoader"/>
+    </bean>
+    
+    <bean id="createLocationResource" class="flymetomars.presentation.resources.CreateLocationResource" scope="session">
+        <property name="templateLoader" ref="templateLoader"/>
+        <property name="exceptionHandler" ref="exceptionHandler"/>
+        <property name="entityLoader" ref="coreLoader"/>
+        <property name="manager" ref="decisionManager"/>
+        <property name="formHandler" ref="formHandler"/>
+        <property name="entityFactory" ref="coreFactory"/>
+        <property name="entitySaver" ref="coreSaver"/>
+    </bean>
+    
+    <bean id="addExpertiseResource" class="flymetomars.presentation.resources.AddExpertiseResource" scope="session">
+        <property name="templateLoader" ref="templateLoader"/>
+        <property name="exceptionHandler" ref="exceptionHandler"/>
+        <property name="entityLoader" ref="coreLoader"/>
+        <property name="manager" ref="decisionManager"/>
+        <property name="formHandler" ref="formHandler"/>
+        <property name="entityFactory" ref="coreFactory"/>
+        <property name="entitySaver" ref="coreSaver"/>
+        <property name="entityUpdater" ref="coreUpdater"/>
+        <property name="expertiseDao" ref="expertiseDAO"/>
+    </bean>
+
+    <bean id="invitationResource" class="flymetomars.presentation.resources.InvitationResource" scope="session">
+        <property name="templateLoader" ref="templateLoader"/>
+        <property name="exceptionHandler" ref="exceptionHandler"/>
+        <property name="manager" ref="decisionManager"/>
+        <property name="entityLoader" ref="coreLoader"/>
+        <property name="formHandler" ref="formHandler"/>
+        <property name="entityUpdater" ref="coreUpdater"/>
+        <property name="invitationHandler" ref="invitationHandler"/>
+    </bean>
+
+    <bean id="createInvitationResource" class="flymetomars.presentation.resources.CreateInvitationResource" scope="session">
+        <property name="templateLoader" ref="templateLoader"/>
+        <property name="exceptionHandler" ref="exceptionHandler"/>
+        <property name="manager" ref="decisionManager"/>
+        <property name="formHandler" ref="formHandler"/>
+        <property name="entityLoader" ref="coreLoader"/>
+        <property name="entityFactory" ref="coreFactory"/>
+        <property name="entitySaver" ref="coreSaver"/>
+        <property name="entityUpdater" ref="coreUpdater"/>
+        <property name="invitationHandler" ref="invitationHandler"/>
+    </bean>
+    
+    <!-- End Resource Beans -->
+
+</beans>

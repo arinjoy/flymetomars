@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actions>
+        <action>
+            <actionName>CUSTOM-Jetty Run</actionName>
+            <displayName>Jetty Run</displayName>
+            <goals>
+                <goal>jetty:run-war</goal>
+            </goals>
+        </action>
+        <action>
+            <actionName>CUSTOM-Jetty Stop</actionName>
+            <displayName>Jetty Stop</displayName>
+            <goals>
+                <goal>jetty:stop</goal>
+            </goals>
+        </action>
+        <action>
+            <actionName>CUSTOM-Run Integration Test</actionName>
+            <displayName>Run Integration Tests</displayName>
+            <goals>
+                <goal>clean</goal>
+                <goal>integration-test</goal>
+            </goals>
+        </action>
+        <action>
+            <actionName>test</actionName>
+            <goals>
+                <goal>clean</goal>
+                <goal>integration-test</goal>
+            </goals>
+        </action>
+        <action>
+            <actionName>build</actionName>
+            <goals>
+                <goal>clean</goal>
+                <goal>integration-test</goal>
+                <goal>install</goal>
+            </goals>
+        </action>
+    </actions>

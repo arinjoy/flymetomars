@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+            http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+            http://www.springframework.org/schema/context
+            http://www.springframework.org/schema/context/spring-context.xsd
+            http://www.springframework.org/schema/util
+            http://www.springframework.org/schema/util/spring-util-3.2.1.xsd
+            http://www.springframework.org/schema/tx
+            http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+            http://www.springframework.org/schema/aop
+            http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+            http://www.springframework.org/schema/tx
+            http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
+
+    <!-- Start Custom DAO (non-hibernate) bean -->
+    
+    <bean id="SaltDAO" class="flymetomars.dataaccess.binary.BinarySaltDAOImpl" scope="singleton">
+        <constructor-arg index="0"><value>${project.basedir}/src/main/resources/passwordSalts.dat</value></constructor-arg>
+    </bean>
+    
+    <!-- End Custom DAO bean -->
+    
+    <!-- Start Hibernate Stuff -->
+    
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+        <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
+        <property name="url" value="jdbc:mysql://localhost:3306/${artifactId}"/>
+        <property name="username" value="fmtm"/>
+        <property name="password" value="fmtm"/>
+
+        <!--property name="defaultAutoCommit" value="false" /-->
+        <property name="initialSize" value="3"/>
+        <property name="maxActive" value="50"/>
+    </bean>
+
+    <bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+        <property name="sessionFactory" ref="sessionFactory"/>
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <tx:annotation-driven transaction-manager="transactionManager"/>
+
+    <bean id="sessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="hibernateProperties">
+            <props>
+                <prop key="hibernate.dialect">org.hibernate.dialect.MySQL5InnoDBDialect</prop>
+                <prop key="hibernate.show_sql">false</prop>
+                <prop key="hibernate.hbm2ddl.auto">${hibernate-ddl}</prop>
+                <prop key="hibernate.format_sql">true</prop>
+                <prop key="hibernate.transaction.factory_class">org.hibernate.transaction.JDBCTransactionFactory</prop>
+                <!--prop key="current_session_context_class">thread</prop-->
+            </props>
+        </property>
+        <property name="mappingLocations">
+            <list>
+                <value>classpath:person.hbm.xml</value>
+                <value>classpath:mission.hbm.xml</value>
+                <value>classpath:invitation.hbm.xml</value>
+                <value>classpath:location.hbm.xml</value>
+                <value>classpath:expertise.hbm.xml</value>
+                <value>classpath:saltedpassword.hbm.xml</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="parentTransProxy" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean"
+          abstract="true">
+        <property name="transactionManager" ref="transactionManager"/>
+
+        <property name="transactionAttributes">
+            <props>
+                <prop key="load*">PROPAGATION_SUPPORTS,readOnly</prop>
+                <prop key="doLoad*">PROPAGATION_SUPPORTS,readOnly</prop>
+                <prop key="find*">PROPAGATION_SUPPORTS,readOnly</prop>
+                <prop key="get*">PROPAGATION_SUPPORTS,readOnly</prop>
+                <prop key="*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
+    
+    <!-- End Hibernate Stuff -->
+    
+    <!-- Start DAO beans (Hibernate) -->
+
+    <bean id="personDAO" parent="parentTransProxy" scope="singleton">
+        <property name="transactionManager" ref="transactionManager"/>
+
+        <property name="target">
+            <bean class="flymetomars.dataaccess.hibernate.HibernatePersonDAOImpl">
+                <property name="sessionFactory" ref="sessionFactory"/>
+            </bean>
+        </property>
+    </bean>
+
+    <bean id="invitationDAO" parent="parentTransProxy" scope="singleton">
+        <property name="transactionManager" ref="transactionManager"/>
+
+        <property name="target">
+            <bean class="flymetomars.dataaccess.hibernate.HibernateInvitationDAOImpl">
+                <property name="sessionFactory" ref="sessionFactory"/>
+            </bean>
+        </property>
+    </bean>
+
+    <bean id="missionDAO" parent="parentTransProxy" scope="singleton">
+        <property name="transactionManager" ref="transactionManager"/>
+
+        <property name="target">
+            <bean class="flymetomars.dataaccess.hibernate.HibernateMissionDAOImpl">
+                <property name="sessionFactory" ref="sessionFactory"/>
+            </bean>
+        </property>
+    </bean>
+
+     <bean id="locationDAO" parent="parentTransProxy" scope="singleton">
+        <property name="transactionManager" ref="transactionManager"/>
+
+        <property name="target">
+            <bean class="flymetomars.dataaccess.hibernate.HibernateLocationDAOImpl">
+                <property name="sessionFactory" ref="sessionFactory"/>
+            </bean>
+        </property>
+    </bean>
+    
+    <bean id="expertiseDAO" parent="parentTransProxy" scope="singleton">
+        <property name="transactionManager" ref="transactionManager"/>
+
+        <property name="target">
+            <bean class="flymetomars.dataaccess.hibernate.HibernateExpertiseDAOImpl">
+                <property name="sessionFactory" ref="sessionFactory"/>
+            </bean>
+        </property>
+    </bean>
+
+    <bean id="saltedPasswordDAO" parent="parentTransProxy" scope="singleton">
+        <property name="transactionManager" ref="transactionManager"/>
+
+        <property name="target">
+            <bean class="flymetomars.dataaccess.hibernate.HibernateSaltedPasswordDAOImpl">
+                <property name="sessionFactory" ref="sessionFactory"/>
+            </bean>
+        </property>
+    </bean>
+    
+    <!-- End DAO beans -->
+    
+    <!-- Start Core beans -->
+    
+    <bean id="coreFactory" class="flymetomars.business.core.EntityFactory" />
+    
+    <bean id="coreLoader" class="flymetomars.business.core.EntityLoader">
+        <constructor-arg ref="personDAO"/>
+        <constructor-arg ref="invitationDAO"/>
+        <constructor-arg ref="missionDAO"/>
+        <constructor-arg ref="locationDAO"/>
+        <constructor-arg ref="expertiseDAO"/>
+        <constructor-arg ref="saltedPasswordDAO"/>
+        <constructor-arg ref="SaltDAO"/>
+    </bean>
+    
+    <bean id="coreSaver" class="flymetomars.business.core.EntitySaver">
+        <constructor-arg ref="personDAO"/>
+        <constructor-arg ref="invitationDAO"/>
+        <constructor-arg ref="missionDAO"/>
+        <constructor-arg ref="locationDAO"/>
+        <constructor-arg ref="expertiseDAO"/>
+        <constructor-arg ref="saltedPasswordDAO"/>
+        <constructor-arg ref="SaltDAO"/>
+    </bean>
+    
+    <bean id="coreUpdater" class="flymetomars.business.core.EntityUpdater">
+        <constructor-arg ref="personDAO"/>
+        <constructor-arg ref="invitationDAO"/>
+        <constructor-arg ref="missionDAO"/>
+        <constructor-arg ref="locationDAO"/>
+        <constructor-arg ref="expertiseDAO"/>
+        <constructor-arg ref="saltedPasswordDAO"/>
+        <constructor-arg ref="SaltDAO"/>
+    </bean>
+    
+    <bean id="coreDeleter" class="flymetomars.business.core.EntityDeleter">
+        <constructor-arg ref="personDAO"/>
+        <constructor-arg ref="invitationDAO"/>
+        <constructor-arg ref="missionDAO"/>
+        <constructor-arg ref="locationDAO"/>
+        <constructor-arg ref="expertiseDAO"/>
+        <constructor-arg ref="saltedPasswordDAO"/>
+        <constructor-arg ref="SaltDAO"/>
+    </bean>
+    
+    <!-- End Core beans -->
+    
+    <!-- Start Handler beans -->
+    
+    <bean id="invitationHandler" class="flymetomars.business.handling.InvitationHandler" />
+    
+    <bean id="passwordHandler" class="flymetomars.business.handling.PasswordHandler">
+        <constructor-arg ref="coreLoader"/>
+    </bean>
+    
+    <!-- End Handler beans -->
+    
+    <!-- Begin Service beans -->
+    
+    <bean id="authenticationService" class="flymetomars.business.services.AuthServiceImpl">
+        <constructor-arg ref="coreLoader"/>
+        <constructor-arg ref="coreSaver"/>
+        <constructor-arg ref="coreUpdater"/>
+        <constructor-arg ref="passwordHandler"/>
+    </bean>
+    
+    <bean id="registerService" class="flymetomars.business.services.RegisterServiceImpl">
+        <constructor-arg ref="coreLoader"/>
+        <constructor-arg ref="coreSaver"/>
+        <constructor-arg ref="coreFactory"/>
+        <constructor-arg ref="passwordHandler"/>
+    </bean>
+    
+    <!-- End Service beans -->
+    
+    <!-- Start Miner beans -->
+    
+    <bean id="personMiner" class="flymetomars.business.mining.PersonMiner">
+        <constructor-arg ref="coreLoader"/>
+    </bean>
+    
+    <bean id="missionMiner" class="flymetomars.business.mining.MissionMiner">
+        <constructor-arg ref="coreLoader"/>
+    </bean>
+    
+    <!-- End Miner beans -->
+
+</beans>
